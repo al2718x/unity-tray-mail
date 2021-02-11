@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 from gi.repository import GLib
 from gi.repository import Gtk
-from gi.repository import AppIndicator3 as appIndicator
+from gi.repository import AppIndicator3
 import signal
 import subprocess
 
@@ -14,12 +14,12 @@ class MyIndicator:
     processes = []
 
     def __init__(self):
-        self.ind = appIndicator.Indicator.new(
+        self.ind = AppIndicator3.Indicator.new(
             'Test',
             'indicator-messages',
-            appIndicator.IndicatorCategory.APPLICATION_STATUS
+            AppIndicator3.IndicatorCategory.COMMUNICATIONS
         )
-        self.ind.set_status(appIndicator.IndicatorStatus.ACTIVE)
+        self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.ind.set_attention_icon('new-messages-red')
         self.menu = Gtk.Menu()
 
@@ -66,7 +66,7 @@ class MyIndicator:
         Gtk.main()
 
     def run(self, widget, param):
-        self.ind.set_status(appIndicator.IndicatorStatus.ATTENTION)
+        self.ind.set_status(AppIndicator3.IndicatorStatus.ATTENTION)
         # subprocess.run(['thunderbird'])
         p = subprocess.Popen(param)
         self.processes.append(p)
@@ -75,7 +75,7 @@ class MyIndicator:
 
     def restore_ind(self):
         # print(self.processes)
-        self.ind.set_status(appIndicator.IndicatorStatus.ACTIVE)
+        self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
 
     def quit(self, widget):
         # for pid in self.processes:
