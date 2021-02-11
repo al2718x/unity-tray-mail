@@ -17,7 +17,6 @@ class MyIndicator:
         self.ind = appIndicator.Indicator.new(
             'Test',
             'indicator-messages',
-            # 'application-x-addon',
             appIndicator.IndicatorCategory.APPLICATION_STATUS
         )
         self.ind.set_status(appIndicator.IndicatorStatus.ACTIVE)
@@ -32,6 +31,11 @@ class MyIndicator:
         item = Gtk.MenuItem()
         item.set_label('Thunderbird / Compose')
         item.connect('activate', self.run, ['thunderbird', '-compose'])
+        self.menu.append(item)
+
+        item = Gtk.MenuItem()
+        item.set_label('Thunderbird / Address Book')
+        item.connect('activate', self.run, ['thunderbird', '-addressbook'])
         self.menu.append(item)
 
         item = Gtk.MenuItem()
@@ -66,11 +70,11 @@ class MyIndicator:
         # subprocess.run(['thunderbird'])
         p = subprocess.Popen(param)
         self.processes.append(p)
-        print('pid=', p.pid)
+        # print('pid=', p.pid)
         GLib.timeout_add_seconds(1, self.restore_ind)
 
     def restore_ind(self):
-        print(self.processes)
+        # print(self.processes)
         self.ind.set_status(appIndicator.IndicatorStatus.ACTIVE)
 
     def quit(self, widget):
