@@ -6,7 +6,7 @@ gi.require_version('AppIndicator3', '0.1')
 from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import AppIndicator3
-import signal
+# import signal
 import subprocess
 
 
@@ -15,30 +15,46 @@ class MyIndicator:
 
     def __init__(self):
         self.ind = AppIndicator3.Indicator.new(
-            'Test',
+            'Thunderbird Indicator',
             'indicator-messages',
-            AppIndicator3.IndicatorCategory.COMMUNICATIONS
+            AppIndicator3.IndicatorCategory.SYSTEM_SERVICES
         )
         self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.ind.set_attention_icon('new-messages-red')
         self.menu = Gtk.Menu()
 
-        item = Gtk.MenuItem()
+        item = Gtk.ImageMenuItem()
+        img = Gtk.Image()
+        img.set_from_icon_name('thunderbird', 16)
+        item.set_image(img)
+        item.set_always_show_image(True)
         item.set_label('Thunderbird')
         item.connect('activate', self.run, 'thunderbird')
         self.menu.append(item)
 
-        item = Gtk.MenuItem()
-        item.set_label('Thunderbird / Compose')
+        item = Gtk.ImageMenuItem()
+        img = Gtk.Image()
+        img.set_from_icon_name('stock_mail-compose', 16)
+        item.set_image(img)
+        item.set_always_show_image(True)
+        item.set_label('Compose')
         item.connect('activate', self.run, ['thunderbird', '-compose'])
         self.menu.append(item)
 
-        item = Gtk.MenuItem()
-        item.set_label('Thunderbird / Address Book')
+        item = Gtk.ImageMenuItem()
+        img = Gtk.Image()
+        img.set_from_icon_name('stock_addressbook', 16)
+        item.set_image(img)
+        item.set_always_show_image(True)
+        item.set_label('Address Book')
         item.connect('activate', self.run, ['thunderbird', '-addressbook'])
         self.menu.append(item)
 
-        item = Gtk.MenuItem()
+        item = Gtk.ImageMenuItem()
+        img = Gtk.Image()
+        img.set_from_icon_name('org.gnome.Calendar', 16)
+        item.set_image(img)
+        item.set_always_show_image(True)
         item.set_label('Calendar')
         item.connect('activate', self.run, 'gnome-calendar')
         self.menu.append(item)
@@ -53,7 +69,11 @@ class MyIndicator:
         # item.connect('activate', self.run, './DeltaChat.sh')
         # self.menu.append(item)
 
-        item = Gtk.MenuItem()
+        item = Gtk.ImageMenuItem()
+        img = Gtk.Image()
+        img.set_from_icon_name('application-exit', 16)
+        item.set_image(img)
+        item.set_always_show_image(True)
         item.set_label('Quit')
         item.connect('activate', self.quit)
         self.menu.append(item)
