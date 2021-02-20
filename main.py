@@ -11,53 +11,18 @@ import subprocess
 
 
 class MyIndicator:
-    processes = []
+    # processes = []
 
     def __init__(self):
+        # noinspection PyArgumentList
         self.ind = AppIndicator3.Indicator.new(
-            'Thunderbird Indicator',
+            'Thunderbird Indicator 1.0.0',
             'indicator-messages',
             AppIndicator3.IndicatorCategory.SYSTEM_SERVICES
         )
         self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.ind.set_attention_icon('new-messages-red')
         self.menu = Gtk.Menu()
-
-        item = Gtk.ImageMenuItem()
-        img = Gtk.Image()
-        img.set_from_icon_name('thunderbird', 16)
-        item.set_image(img)
-        item.set_always_show_image(True)
-        item.set_label('Thunderbird')
-        item.connect('activate', self.run, 'thunderbird')
-        self.menu.append(item)
-
-        item = Gtk.ImageMenuItem()
-        img = Gtk.Image()
-        img.set_from_icon_name('stock_mail-compose', 16)
-        item.set_image(img)
-        item.set_always_show_image(True)
-        item.set_label('Compose')
-        item.connect('activate', self.run, ['thunderbird', '-compose'])
-        self.menu.append(item)
-
-        item = Gtk.ImageMenuItem()
-        img = Gtk.Image()
-        img.set_from_icon_name('stock_addressbook', 16)
-        item.set_image(img)
-        item.set_always_show_image(True)
-        item.set_label('Address Book')
-        item.connect('activate', self.run, ['thunderbird', '-addressbook'])
-        self.menu.append(item)
-
-        item = Gtk.ImageMenuItem()
-        img = Gtk.Image()
-        img.set_from_icon_name('org.gnome.Calendar', 16)
-        item.set_image(img)
-        item.set_always_show_image(True)
-        item.set_label('Calendar')
-        item.connect('activate', self.run, 'gnome-calendar')
-        self.menu.append(item)
 
         # item = Gtk.MenuItem()
         # item.set_label('Electron Mail')
@@ -69,33 +34,40 @@ class MyIndicator:
         # item.connect('activate', self.run, './DeltaChat.sh')
         # self.menu.append(item)
 
-        item = Gtk.ImageMenuItem()
-        img = Gtk.Image()
-        img.set_from_icon_name('application-exit', 16)
-        item.set_image(img)
-        item.set_always_show_image(True)
-        item.set_label('Quit')
-        item.connect('activate', self.quit)
-        self.menu.append(item)
+        self.menu_item('Thunderbird', 'thunderbird', 'thunderbird')
+        self.menu_item('Compose', 'stock_mail-compose', ['thunderbird', '-compose'])
+        self.menu_item('Address Book', 'stock_addressbook', ['thunderbird', '-addressbook'])
+        self.menu_item('Calendar', 'org.gnome.Calendar', 'gnome-calendar')
+        self.menu_item('Quit', 'application-exit')
 
         self.menu.show_all()
         self.ind.set_menu(self.menu)
 
-    @staticmethod
-    def main():
+    def menu_item(self, label, icon_name, connect_args=None):
+        item = Gtk.ImageMenuItem()
+        img = Gtk.Image()
+        img.set_from_icon_name(icon_name, 16)
+        item.set_image(img)
+        item.set_always_show_image(True)
+        item.set_label(label)
+        print(connect_args)
+        if connect_args:
+            item.connect('activate', self.run, connect_args)
+        else:
+            item.connect('activate', self.quit)
+        self.menu.append(item)
+
+    def main(self):
         Gtk.main()
 
     def run(self, widget, param):
         self.ind.set_status(AppIndicator3.IndicatorStatus.ATTENTION)
         # subprocess.run(['thunderbird'])
-        p = subprocess.Popen(param)
-        self.processes.append(p)
+        subprocess.Popen(param)
+        # p = subprocess.Popen(param)
+        # self.processes.append(p)
         # print('pid=', p.pid)
-        GLib.timeout_add_seconds(1, self.restore_ind)
-
-    def restore_ind(self):
-        # print(self.processes)
-        self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
+        GLib.timeout_add_seconds(1, self.ind.set_status, AppIndicator3.IndicatorStatus.ACTIVE)
 
     def quit(self, widget):
         # for pid in self.processes:
