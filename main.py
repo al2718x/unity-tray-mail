@@ -22,6 +22,7 @@ class MyIndicator:
         )
         self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.ind.set_attention_icon('new-messages-red')
+        # self.ind.set_label('email', 'email')
         self.menu = Gtk.Menu()
 
         # item = Gtk.MenuItem()
@@ -50,7 +51,6 @@ class MyIndicator:
         item.set_image(img)
         item.set_always_show_image(True)
         item.set_label(label)
-        print(connect_args)
         if connect_args:
             item.connect('activate', self.run, connect_args)
         else:
