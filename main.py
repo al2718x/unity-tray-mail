@@ -29,36 +29,28 @@ class MyIndicator:
         # item.set_label('Electron Mail')
         # item.connect('activate', self.run, './ElectronMail.sh')
         # self.menu.append(item)
-        #
-        # item = Gtk.MenuItem()
-        # item.set_label('Delta Chat')
-        # item.connect('activate', self.run, './DeltaChat.sh')
-        # self.menu.append(item)
 
-        self.menu_item('Thunderbird', 'thunderbird', 'thunderbird')
-        self.menu_item('Compose', 'stock_mail-compose', ['thunderbird', '-compose'])
-        self.menu_item('Address Book', 'stock_addressbook', ['thunderbird', '-addressbook'])
-        self.menu_item('Calendar', 'org.gnome.Calendar', 'gnome-calendar')
-        self.menu_item('Quit', 'application-exit')
+        self.menu_item('Thunderbird', 'thunderbird', self.run, 'thunderbird')
+        self.menu_item('Compose', 'stock_mail-compose', self.run, ['thunderbird', '-compose'])
+        self.menu_item('Address Book', 'stock_addressbook', self.run, ['thunderbird', '-addressbook'])
+        self.menu_item('Calendar', 'org.gnome.Calendar', self.run, 'gnome-calendar')
+        self.menu_item('Quit', 'application-exit', self.quit)
 
         self.menu.show_all()
         self.ind.set_menu(self.menu)
 
-    def menu_item(self, label, icon_name, connect_args=None):
+    def menu_item(self, label, icon_name, action, args=None):
         item = Gtk.ImageMenuItem()
         img = Gtk.Image()
         img.set_from_icon_name(icon_name, 16)
         item.set_image(img)
         item.set_always_show_image(True)
         item.set_label(label)
-        if connect_args:
-            item.connect('activate', self.run, connect_args)
+        if args:
+            item.connect('activate', action, args)
         else:
-            item.connect('activate', self.quit)
+            item.connect('activate', action)
         self.menu.append(item)
-
-    def main(self):
-        Gtk.main()
 
     def run(self, widget, param):
         self.ind.set_status(AppIndicator3.IndicatorStatus.ATTENTION)
@@ -74,6 +66,9 @@ class MyIndicator:
         #     if isinstance(pid, subprocess.Popen):
         #         pid.send_signal(sig=signal.SIGTERM)
         Gtk.main_quit()
+
+    def main(self):
+        Gtk.main()
 
 
 if __name__ == '__main__':
