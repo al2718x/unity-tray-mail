@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
+import subprocess
+# import signal
 import gi.repository
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
 from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import AppIndicator3
-# import signal
-import subprocess
 
 
 class MyIndicator:
@@ -16,7 +16,7 @@ class MyIndicator:
     def __init__(self):
         # noinspection PyArgumentList
         self.ind = AppIndicator3.Indicator.new(
-            'Thunderbird Indicator 1.0.0',
+            'Thunderbird Indicator 1.0.1',
             'indicator-messages',
             AppIndicator3.IndicatorCategory.SYSTEM_SERVICES
         )
