@@ -16,7 +16,7 @@ class MyIndicator:
     def __init__(self):
         # noinspection PyArgumentList
         self.ind = AppIndicator3.Indicator.new(
-            'Thunderbird Indicator 1.0.1',
+            'Thunderbird Indicator 1.0.2',
             'indicator-messages',
             AppIndicator3.IndicatorCategory.SYSTEM_SERVICES
         )
@@ -31,6 +31,7 @@ class MyIndicator:
         # self.menu.append(item)
 
         self.menu_item('Thunderbird', 'thunderbird', self.run, 'thunderbird')
+        self.menu_item_f('Tuta Mail', '/home/al/.local/share/icons/hicolor/16x16/apps/tutanota-desktop.png', self.run, '/home/al/tutanota/tutanota-desktop-linux.AppImage')
         self.menu_item('Compose', 'stock_mail-compose', self.run, ['thunderbird', '-compose'])
         self.menu_item('Address Book', 'stock_addressbook', self.run, ['thunderbird', '-addressbook'])
         self.menu_item('Calendar', 'org.gnome.Calendar', self.run, 'gnome-calendar')
@@ -39,10 +40,21 @@ class MyIndicator:
         self.menu.show_all()
         self.ind.set_menu(self.menu)
 
-    def menu_item(self, label, icon_name, action, args=None):
+    def menu_item_f(self, label, icon_file, action, args=None):
+        img = Gtk.Image.new_from_file(icon_file)
         item = Gtk.ImageMenuItem()
-        img = Gtk.Image()
-        img.set_from_icon_name(icon_name, 16)
+        item.set_image(img)
+        item.set_always_show_image(True)
+        item.set_label(label)
+        if args:
+            item.connect('activate', action, args)
+        else:
+            item.connect('activate', action)
+        self.menu.append(item)
+
+    def menu_item(self, label, icon_name, action, args=None):
+        img = Gtk.Image().new_from_icon_name(icon_name, Gtk.IconSize.MENU)
+        item = Gtk.ImageMenuItem()
         item.set_image(img)
         item.set_always_show_image(True)
         item.set_label(label)
