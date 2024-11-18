@@ -21,42 +21,35 @@ class MyIndicator:
         self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.ind.set_attention_icon('new-messages-red')
         self.menu = Gtk.Menu()
-        self.menu_item('Thunderbird', 'thunderbird', self.run, 'thunderbird')
-        self.menu_item_f(
+        self.menu_item('Thunderbird', icon_name='thunderbird', args='thunderbird')
+        self.menu_item(
             'Tuta Mail',
-            '/home/al/.local/share/icons/hicolor/16x16/apps/tutanota-desktop.png',
-            self.run,
-            '/home/al/tutanota/tutanota-desktop-linux.AppImage'
+            icon_file='/home/al/.local/share/icons/hicolor/16x16/apps/tutanota-desktop.png',
+            args=['/home/al/tutanota/tutanota-desktop-linux.AppImage']
         )
-        self.menu_item('Compose', 'stock_mail-compose', self.run, ['thunderbird', '-compose'])
-        self.menu_item('Address Book', 'stock_addressbook', self.run, ['thunderbird', '-addressbook'])
-        self.menu_item('Calendar', 'org.gnome.Calendar', self.run, 'gnome-calendar')
-        self.menu_item('Quit', 'application-exit', self.quit)
+        self.menu_item('Compose', icon_name='stock_mail-compose', args=['thunderbird', '-compose'])
+        self.menu_item('Address Book', icon_name='stock_addressbook', args=['thunderbird', '-addressbook'])
+        self.menu_item('Calendar', icon_name='org.gnome.Calendar', args=['gnome-calendar'])
+        self.menu_item('Quit', icon_name='application-exit', action=self.quit)
         self.menu.show_all()
         self.ind.set_menu(self.menu)
 
-    def menu_item_f(self, label, icon_file, action, args=None):
-        img = Gtk.Image.new_from_file(icon_file)
+    def menu_item(self, label, *, icon_name=None, icon_file=None, action=None, args=None):
         item = Gtk.ImageMenuItem()
-        item.set_image(img)
-        item.set_always_show_image(True)
         item.set_label(label)
+        if icon_name:
+            img = Gtk.Image().new_from_icon_name(icon_name, Gtk.IconSize.MENU)
+            item.set_image(img)
+            item.set_always_show_image(True)
+        elif icon_file:
+            img = Gtk.Image.new_from_file(icon_file)
+            item.set_image(img)
+            item.set_always_show_image(True)
+        _action = self.run if None == action else action
         if args:
-            item.connect('activate', action, args)
+            item.connect('activate', _action, args)
         else:
-            item.connect('activate', action)
-        self.menu.append(item)
-
-    def menu_item(self, label, icon_name, action, args=None):
-        img = Gtk.Image().new_from_icon_name(icon_name, Gtk.IconSize.MENU)
-        item = Gtk.ImageMenuItem()
-        item.set_image(img)
-        item.set_always_show_image(True)
-        item.set_label(label)
-        if args:
-            item.connect('activate', action, args)
-        else:
-            item.connect('activate', action)
+            item.connect('activate', _action)
         self.menu.append(item)
 
     def run(self, widget, param):
