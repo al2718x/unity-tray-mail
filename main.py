@@ -27,6 +27,11 @@ class MyIndicator:
             icon_file='/home/al/.local/share/icons/hicolor/16x16/apps/tutanota-desktop.png',
             args=['/home/al/tutanota/tutanota-desktop-linux.AppImage']
         )
+        self.menu_item(
+            'Electron Mail',
+            icon_name='com.github.vladimiry.ElectronMail',
+            args=['flatpak', 'run', 'com.github.vladimiry.ElectronMail']
+        )
         self.menu_item('Compose', icon_name='stock_mail-compose', args=['thunderbird', '-compose'])
         self.menu_item('Address Book', icon_name='stock_addressbook', args=['thunderbird', '-addressbook'])
         self.menu_item('Calendar', icon_name='org.gnome.Calendar', args=['gnome-calendar'])
