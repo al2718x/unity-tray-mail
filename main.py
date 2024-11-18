@@ -32,6 +32,11 @@ class MyIndicator:
             icon_name='com.github.vladimiry.ElectronMail',
             args=['flatpak', 'run', 'com.github.vladimiry.ElectronMail']
         )
+        self.menu_item(
+            'Delta Chat',
+            icon_name='chat.delta.desktop',
+            args=['flatpak', 'run', 'chat.delta.desktop']
+        )
         self.menu_item('Compose', icon_name='stock_mail-compose', args=['thunderbird', '-compose'])
         self.menu_item('Address Book', icon_name='stock_addressbook', args=['thunderbird', '-addressbook'])
         self.menu_item('Calendar', icon_name='org.gnome.Calendar', args=['gnome-calendar'])
