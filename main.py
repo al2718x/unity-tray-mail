@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
+
 import configparser
 import os
-import subprocess
-import gi.repository
-
+# import subprocess
+import gi  # type: ignore[import-untyped]
 gi.require_version('Gtk', '3.0')
 gi.require_version('AppIndicator3', '0.1')
-from gi.repository import GLib
-from gi.repository import Gtk
-from gi.repository import AppIndicator3
+gi.require_version('GLib', '2.0')
+from gi.repository import Gtk  # type: ignore[import-untyped]
+from gi.repository import AppIndicator3  # type: ignore[import-untyped]
+from gi.repository import GLib  # type: ignore[import-untyped]
 
 
 class MyIndicator:
@@ -16,24 +17,25 @@ class MyIndicator:
     def __init__(self):
         # noinspection PyArgumentList
         self.ind = AppIndicator3.Indicator.new(
-            'Thunderbird Indicator 1.0.3',
+            'Thunderbird Indicator 1.1.0',
             'indicator-messages',
             AppIndicator3.IndicatorCategory.SYSTEM_SERVICES
         )
         self.ind.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
         self.ind.set_attention_icon('new-messages-red')
         self.menu = Gtk.Menu()
-        self.menu_item('Thunderbird', icon_name='thunderbird', args=['thunderbird'])
+        # self.menu_item('Thunderbird', icon_name='thunderbird', args=['thunderbird'])
         for section in self.ini_sections(self._ini):
             self.menu_item(
                 self.ini_read(self._ini, section, 'label'),
-                icon_name=self.ini_read(self._ini, section, 'icon_name'),
+                icon_name = self.ini_read(self._ini, section, 'icon_name'),
                 icon_file = self.ini_read(self._ini, section, 'icon_file'),
-                args=self.ini_read(self._ini, section, 'args').split(' ')
+                args = self.ini_read(self._ini, section, 'args')
             )
-        self.menu_item('Compose', icon_name='stock_mail-compose', args=['thunderbird', '-compose'])
-        self.menu_item('Address Book', icon_name='stock_addressbook', args=['thunderbird', '-addressbook'])
-        self.menu_item('Calendar', icon_name='org.gnome.Calendar', args=['gnome-calendar'])
+        # self.menu_item('Compose', icon_name='stock_mail-compose', args=['thunderbird', '-compose'])
+        # self.menu_item('Address Book', icon_name='stock_addressbook', args=['thunderbird', '-addressbook'])
+        # self.menu_item('Calendar', icon_name='org.gnome.Calendar', args=['gnome-calendar'])
+        self.menu_item('Restart', icon_name='view-refresh', action=self.restart)
         self.menu_item('Quit', icon_name='application-exit', action=self.quit)
         self.menu.show_all()
         self.ind.set_menu(self.menu)
@@ -76,14 +78,38 @@ class MyIndicator:
             item.connect('activate', _action)
         self.menu.append(item)
 
-    def run(self, widget, param):
+    def run(self, widget, args):
         self.ind.set_status(AppIndicator3.IndicatorStatus.ATTENTION)
-        subprocess.Popen(param)
         GLib.timeout_add_seconds(1, self.ind.set_status, AppIndicator3.IndicatorStatus.ACTIVE)
+        # subprocess.Popen(param)
+        os.system(args + " &")
 
-    @staticmethod
-    def quit(widget):
-        Gtk.main_quit()
+    def restart(self, widget):
+        dialog = Gtk.MessageDialog(
+            parent=None,
+            flags=0,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.YES_NO,
+            text="Are you sure?"
+        )
+        response = dialog.run()
+        dialog.destroy()
+        if response == Gtk.ResponseType.YES:
+            os.system("./run &")
+            Gtk.main_quit()
+
+    def quit(self, widget):
+        dialog = Gtk.MessageDialog(
+            parent=None,
+            flags=0,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.YES_NO,
+            text="Are you sure?"
+        )
+        response = dialog.run()
+        dialog.destroy()
+        if response == Gtk.ResponseType.YES:
+            Gtk.main_quit()
 
     @staticmethod
     def main():
